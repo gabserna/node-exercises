@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Plants</title>
+  </head>
+  <body>
+    <h1>Plant Game</h1>
+    <p>Plant size: <span id="size"></span></p>
+    <button id="plantTheSeed">Plant seed</button>
+    <button id="harvest">Harvest</button>
+    <button id="bugsAttack">Bugs Attack</button>
+    <script>
+      const theSize = document.getElementById('size');
+      const plantSeedBtn = document.getElementById('plantTheSeed');
+      const harvestBtn = document.getElementById('harvest');
+      const attackBtn = document.getElementById('bugsAttack');
+
+      // Conexión WebSocket con el servidor
+      const ws = new WebSocket('ws://localhost:3000');
+
+      // Manejo de eventos de los botones
+      plantSeedBtn.addEventListener('click', () => {
+        ws.send('plantTheSeed');
+      });
+
+      harvestBtn.addEventListener('click', () => {
+        ws.send('harvest');
+      });
+
+      attackBtn.addEventListener('click', () => {
+        ws.send('bugsAttack');
+      });
+
+      // Manejo de mensajes recibidos del servidor
+      ws.addEventListener('message', (event) => {
+        const mensaje = event.data;
+
+        switch (mensaje) {
+          case 'size':
+            // El servidor envía el tamaño de la planta
+            const size = ws.send('size');
+            theSize.textContent = size;
+            break;
+
+          case 'harvest':
+            // El servidor envía el mensaje de cosecha
+            alert('¡The plant has been harvested!');
+            break;
+
+          case 'error':
+            // El servidor envía un mensaje de error
+            alert('Error: ' + event.data);
+            break;
+
+          default:
+            break;
+        }
+      });
+    </script>
+  </body>
+</html>
